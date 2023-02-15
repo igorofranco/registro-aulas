@@ -3,8 +3,10 @@ import { Button, InputAdornment, TextField } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
-import UserApi from '../app/api/Api/UserApi';
+import UserApi from '../Api/UserApi';
 import { useRouter } from 'next/router';
+import store from '../store/store';
+import { userSlice } from '../features/user/userSlice';
 
 type SingupFormFieldName = 'name' | 'email' | 'password' | 'passwordConfirm';
 
@@ -48,20 +50,26 @@ const AuthForm = (props: AuthFormProps) => {
   const [form, setForm] = useState<AuthFormType>(isLogin() ? createLoginForm() : createSignupForm());
   const [isLoading, setLoading] = useState<boolean>(false);
   const router = useRouter();
+  const { setUser } = userSlice.actions;
 
   const inputsVariant = 'standard';
 
   function isSignup (): boolean { return props.type === 'signup'; }
   function isLogin (): boolean { return !isSignup(); }
 
-  function handleChangeFormField (fieldName: SingupFormFieldName, value: string): void {
+  function handleChangeFormField (e: React.ChangeEvent, fieldName: SingupFormFieldName): void {
+    const value = (e.target as HTMLInputElement).value;
+    if (fieldName === 'name' && value.match(/\d+/)) {
+      (e.target as HTMLInputElement).value = form?.name?.value || '';
+      return;
+    }
     setForm(form => ({
       ...form,
       [fieldName]: { ...form[fieldName], value }
     }));
   }
 
-  function handleBlurFormField (e: React.FocusEvent, fieldName: SingupFormFieldName) {
+  function handleBlurFormField (e: React.FocusEvent, fieldName: SingupFormFieldName): void {
     if (fieldName === 'name') {
       const value = sanitize.name((e.target as HTMLInputElement).value);
       (e.target as HTMLInputElement).value = value;
@@ -82,7 +90,16 @@ const AuthForm = (props: AuthFormProps) => {
     UserApi.attemptLogin({
       email: form.email.value,
       password: form.password.value
-    }).then(() => router.push('/'))
+    })
+      .then(async (token) => {
+        store.dispatch(setUser({
+          name: form.name?.value,
+          email: form.email.value,
+          token
+        }));
+        await router.push('/');
+        setLoading(false);
+      })
       .catch(() => {
         alert('erro no login');
         setLoading(false);
@@ -95,7 +112,8 @@ const AuthForm = (props: AuthFormProps) => {
       name: form.name.value,
       email: form.email.value,
       password: form.password.value
-    }).then(() => login())
+    })
+      .then(() => login())
       .catch(() => {
         alert('erro no cadastro');
         setLoading(false);
@@ -160,7 +178,7 @@ const AuthForm = (props: AuthFormProps) => {
           disabled={isLoading}
           fullWidth
           error={form?.name?.visited && !validate.name()}
-          onChange={(e) => handleChangeFormField('name', e.target.value)}
+          onChange={(e) => handleChangeFormField(e, 'name')}
           onBlur={(e) => handleBlurFormField(e, 'name')}
           InputProps={{
             startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faUser} /></InputAdornment>
@@ -174,7 +192,7 @@ const AuthForm = (props: AuthFormProps) => {
           fullWidth
           disabled={isLoading}
           error={form.email.visited && !validate.email()}
-          onChange={(e) => handleChangeFormField('email', e.target.value)}
+          onChange={(e) => handleChangeFormField(e, 'email')}
           onBlur={(e) => handleBlurFormField(e, 'email')}
           InputProps={{
             startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faEnvelope} /></InputAdornment>
@@ -188,7 +206,7 @@ const AuthForm = (props: AuthFormProps) => {
           fullWidth
           disabled={isLoading}
           error={form.password.visited && !validate.password()}
-          onChange={(e) => handleChangeFormField('password', e.target.value)}
+          onChange={(e) => handleChangeFormField(e, 'password')}
           onBlur={(e) => handleBlurFormField(e, 'password')}
           InputProps={{
             startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faLock} /></InputAdornment>
@@ -205,7 +223,7 @@ const AuthForm = (props: AuthFormProps) => {
           fullWidth
           disabled={isLoading}
           error={form?.passwordConfirm?.visited && !validate.passwordConfirm()}
-          onChange={(e) => handleChangeFormField('passwordConfirm', e.target.value)}
+          onChange={(e) => handleChangeFormField(e, 'passwordConfirm')}
           onBlur={(e) => handleBlurFormField(e, 'passwordConfirm')}
           InputProps={{
             startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faLock} /></InputAdornment>
@@ -213,7 +231,7 @@ const AuthForm = (props: AuthFormProps) => {
         />}
 
         <Button
-          variant="outlined"
+          variant="contained"
           size='large'
           fullWidth
           disabled={!validate.form() || isLoading}

@@ -1,9 +1,9 @@
 import Api from './Api';
-import Instrument from '../../../types/instrument';
+import Instrument from '../types/instrument';
 
 abstract class InstrumentApi extends Api {
   static async getAll (): Promise<Instrument[]> {
-    return this.fetchApi('GET', '/instruments');
+    return this.fetchApi('GET', '/instruments').then(res => res.data.content);
   }
 
   static async create (instrument: string): Promise<Instrument> {

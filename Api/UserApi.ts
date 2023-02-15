@@ -1,5 +1,5 @@
 import Api from './Api';
-import User from '../../../types/user';
+import User from '../types/user';
 
 interface UserForApi {
   name: string;
@@ -20,7 +20,7 @@ abstract class UserApi extends Api {
   }
 
   static async attemptLogin (credentials: Credentials): Promise<Token> {
-    return this.fetchApi('POST', '/login', credentials).then(res => res.token);
+    return this.fetchApi('POST', '/login', credentials).then(res => res.data.token);
   }
 }
 

@@ -1,5 +1,5 @@
 import Api from './Api';
-import ClassFormat from '../../../types/classFormat';
+import ClassFormat from '../types/classFormat';
 
 interface ClassFormatForApi {
   modality: string,

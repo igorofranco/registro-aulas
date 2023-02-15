@@ -1,9 +1,10 @@
 import axios from 'axios';
+import store from '../store/store';
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 abstract class Api {
-  private static baseUrl = 'http://localhost:8081';
+  private static baseUrl = process.env.NEXT_PUBLIC_HOST;
 
   protected static async fetchApi (
     method: RequestMethod,
@@ -11,9 +12,10 @@ abstract class Api {
     data?: any,
     headers?: any
   ): Promise<any> {
+    const token = store.getState().token;
     return axios.request({
       url: this.baseUrl + endpoint,
-      headers,
+      headers: !token ? headers : { ...headers, Authorization: `Bearer ${token}` },
       data,
       method
     });
