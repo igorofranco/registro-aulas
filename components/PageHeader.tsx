@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import store from '../store/store';
+import userStore from '../store/userStore';
 import User from '../types/user';
 import { userSlice } from '../features/user/userSlice';
 
 const PageHeader = () => {
-  const [user, setUser] = useState<User>(store.getState());
-  store.subscribe(() => {
-    setUser(store.getState());
+  const [user, setUser] = useState<User>(userStore.getState());
+  userStore.subscribe(() => {
+    setUser(userStore.getState());
   });
   const { logout } = userSlice.actions;
 
@@ -27,7 +27,7 @@ const PageHeader = () => {
             : <li>
               <Link
                 href='/login'
-                onClick={() => store.dispatch(logout())}
+                onClick={() => userStore.dispatch(logout())}
               >
                 Logout
               </Link>

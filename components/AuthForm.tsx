@@ -5,7 +5,7 @@ import { faEnvelope, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 import UserApi from '../Api/UserApi';
 import { useRouter } from 'next/router';
-import store from '../store/store';
+import userStore from '../store/userStore';
 import { userSlice } from '../features/user/userSlice';
 
 type SingupFormFieldName = 'name' | 'email' | 'password' | 'passwordConfirm';
@@ -92,7 +92,7 @@ const AuthForm = (props: AuthFormProps) => {
       password: form.password.value
     })
       .then(async (token) => {
-        store.dispatch(setUser({
+        userStore.dispatch(setUser({
           name: form.name?.value,
           email: form.email.value,
           token

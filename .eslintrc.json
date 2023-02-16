@@ -20,6 +20,8 @@
         "@typescript-eslint"
     ],
     "rules": {
-        "semi": [2, "always"]
+        "semi": [2, "always"],
+        "eol-last": ["error", "always"],
+        "linebreak-style": ["error", "unix"]
     }
 }

@@ -8,7 +8,7 @@ export const userSlice = createSlice({
     email: ''
   } as User,
   reducers: {
-    setUser (state: User, newState): User {
+    setUser (userState: User, newState): User {
       return newState.payload as User;
     },
     logout (): User {

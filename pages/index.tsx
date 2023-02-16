@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import StudentApi from '../Api/StudentApi';
 import User from '../types/user';
-import store from '../store/store';
+import userStore from '../store/userStore';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 
 interface StudentRow {
@@ -15,10 +15,10 @@ interface StudentRow {
 }
 
 const Home: NextPage = () => {
-  const [user, setUser] = useState<User>(store.getState());
+  const [user, setUser] = useState<User>(userStore.getState());
   const [students, setStudents] = useState<StudentRow[]>([]);
-  store.subscribe(() => {
-    setUser(store.getState());
+  userStore.subscribe(() => {
+    setUser(userStore.getState());
   });
 
   useEffect(() => {
