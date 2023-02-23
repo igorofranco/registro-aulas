@@ -8,6 +8,9 @@ export const studentsSlice = createSlice({
     addStudent (studentsState: Student[], student: {payload: Student, type: string}) {
       studentsState.push(student.payload);
       return studentsState;
+    },
+    setStudents (studentsState: Student[], students: {payload: Student[], type: string}) {
+      return students.payload;
     }
   }
 });

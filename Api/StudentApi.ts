@@ -14,7 +14,7 @@ abstract class StudentApi extends Api {
   }
 
   static async create (student: StudentForApi): Promise<Student> {
-    return this.fetchApi('POST', '/students/create', student);
+    return this.fetchApi('POST', '/students/create', student).then(res => res.data);
   }
 
   static async update (id: number, student: StudentForApi): Promise<Student> {

@@ -15,7 +15,7 @@ abstract class Api {
     const token = store.getState().token;
     return axios.request({
       url: this.baseUrl + endpoint,
-      headers: !token ? headers : { ...headers, Authorization: `Bearer ${token}` },
+      headers: !token ? headers : { ...headers, Authorization: `${token}` },
       data,
       method
     });

@@ -5,9 +5,12 @@ export const instrumentsSlice = createSlice({
   name: 'instruments',
   initialState: [] as Instrument[],
   reducers: {
-    addClassFormat (instrumentsState: Instrument[], student: {payload: Instrument, type: string}) {
-      instrumentsState.push(student.payload);
+    addInstrument (instrumentsState: Instrument[], instrument: {payload: Instrument, type: string}) {
+      instrumentsState.push(instrument.payload);
       return instrumentsState;
+    },
+    setInstruments (instrumentsState: Instrument[], instruments: {payload: Instrument[], type: string}) {
+      return instruments.payload;
     }
   }
 });

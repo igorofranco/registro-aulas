@@ -7,11 +7,11 @@ abstract class InstrumentApi extends Api {
   }
 
   static async create (instrument: string): Promise<Instrument> {
-    return this.fetchApi('PUT', '/instruments/create', { instrument });
+    return this.fetchApi('POST', '/instruments/create', { instrument }).then(res => res.data);
   }
 
   static async update (id: number, instrument: string): Promise<Instrument> {
-    return this.fetchApi('POST', `/instruments/${id}`, { instrument });
+    return this.fetchApi('PUT', `/instruments/${id}`, { instrument });
   }
 }
 

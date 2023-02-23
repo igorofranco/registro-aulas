@@ -3,7 +3,7 @@ import User from './user';
 interface ClassFormat {
   id?: number;
   modality: string;
-  timeMinutes: string;
+  timeMinutes: number;
   price: number;
   user: User;
 }

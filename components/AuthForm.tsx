@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import * as React from 'react';
 import { Button, InputAdornment, TextField } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
@@ -47,8 +47,8 @@ function createSignupForm (): SignupFormType {
 }
 
 const AuthForm = (props: AuthFormProps) => {
-  const [form, setForm] = useState<AuthFormType>(isLogin() ? createLoginForm() : createSignupForm());
-  const [isLoading, setLoading] = useState<boolean>(false);
+  const [form, setForm] = React.useState<AuthFormType>(isLogin() ? createLoginForm() : createSignupForm());
+  const [isLoading, setLoading] = React.useState<boolean>(false);
   const router = useRouter();
   const { setUser } = userSlice.actions;
 
@@ -57,10 +57,10 @@ const AuthForm = (props: AuthFormProps) => {
   function isSignup (): boolean { return props.type === 'signup'; }
   function isLogin (): boolean { return !isSignup(); }
 
-  function handleChangeFormField (e: React.ChangeEvent, fieldName: SingupFormFieldName): void {
-    const value = (e.target as HTMLInputElement).value;
+  function handleChangeFormField (e: React.ChangeEvent<HTMLInputElement | any>, fieldName: SingupFormFieldName): void {
+    const value = e.target.value;
     if (fieldName === 'name' && value.match(/\d+/)) {
-      (e.target as HTMLInputElement).value = form?.name?.value || '';
+      e.target.value = form?.name?.value || '';
       return;
     }
     setForm(form => ({
@@ -69,10 +69,10 @@ const AuthForm = (props: AuthFormProps) => {
     }));
   }
 
-  function handleBlurFormField (e: React.FocusEvent, fieldName: SingupFormFieldName): void {
+  function handleBlurFormField (e: React.FocusEvent<HTMLInputElement | any>, fieldName: SingupFormFieldName): void {
     if (fieldName === 'name') {
-      const value = sanitize.name((e.target as HTMLInputElement).value);
-      (e.target as HTMLInputElement).value = value;
+      const value = sanitize.name(e.target.value);
+      e.target.value = value;
       setForm(form => ({
         ...form,
         name: { value, visited: true }

@@ -1,52 +1,35 @@
-import React, { useState } from 'react';
+import * as React from 'react';
 import Link from 'next/link';
 import userStore from '../store/userStore';
 import User from '../types/user';
 import { userSlice } from '../features/user/userSlice';
+import { AppBar, Box, Toolbar } from '@mui/material';
 
 const PageHeader = () => {
-  const [user, setUser] = useState<User>(userStore.getState());
+  const [user, setUser] = React.useState<User>(userStore.getState());
   userStore.subscribe(() => {
     setUser(userStore.getState());
   });
   const { logout } = userSlice.actions;
 
-  function Nav () {
-    return (
-      <nav>
-        <ul className="flex gap-x-3">
-          {!user.token
-            ? <>
-            <li>
-              <Link href="/login">Login</Link>
-            </li>
-            <li>
-              <Link href="/cadastro">Cadastro</Link>
-            </li>
-          </>
-            : <li>
-              <Link
-                href='/login'
-                onClick={() => userStore.dispatch(logout())}
-              >
-                Logout
-              </Link>
-            </li>
-          }
-        </ul>
-      </nav>
-    );
-  }
+  function isLoggedIn (): boolean { return !!user.token; }
 
   return (
-    <header className='bg-white px-6 py-4 shadow-gray-200 shadow-md flex justify-center'>
-      <main className='w-[960px] flex items-center justify-between'>
-        <section className="font-bold">
-          <Link href="/">Alunos</Link>
-        </section>
-        <Nav />
-      </main>
-    </header>
+    <Box>
+      <AppBar position='static'>
+        <Toolbar className='flex items-center justify-between'>
+          <Link href='/' className='font-bold hover:no-underline'>
+            Alunos
+          </Link>
+          <Link
+            href='/login'
+            onClick={() => (isLoggedIn() ? logout() : null)}
+          >
+            {isLoggedIn() ? 'Logout' : 'Login'}
+          </Link>
+        </Toolbar>
+      </AppBar>
+    </Box>
   );
 };
 
