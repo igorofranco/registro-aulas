@@ -46,6 +46,20 @@ function createSignupForm (): SignupFormType {
   };
 }
 
+export const sanitize = {
+  name (name: string): string {
+    return !name
+      ? ''
+      : name
+        .trim()
+        .toLowerCase()
+        .split(/\s+/g)
+        .map(word => word.match(/(d[aeo]|\d+)/g) ? word : word[0].toUpperCase() + word.substring(1))
+        .map(word => word.length > 1 ? word : word + '.')
+        .join(' ');
+  }
+};
+
 const AuthForm = (props: AuthFormProps) => {
   const [form, setForm] = React.useState<AuthFormType>(isLogin() ? createLoginForm() : createSignupForm());
   const [isLoading, setLoading] = React.useState<boolean>(false);
@@ -91,11 +105,12 @@ const AuthForm = (props: AuthFormProps) => {
       email: form.email.value,
       password: form.password.value
     })
-      .then(async (token) => {
+      .then(async res => {
         userStore.dispatch(setUser({
-          name: form.name?.value,
-          email: form.email.value,
-          token
+          id: res.userId,
+          token: res.token,
+          name: form.name?.value || '',
+          email: form.email.value
         }));
         await router.push('/');
         setLoading(false);
@@ -144,21 +159,6 @@ const AuthForm = (props: AuthFormProps) => {
     },
     form (): boolean {
       return isSignup() ? this.signupForm() : this.loginForm();
-    }
-  };
-
-  const sanitize = {
-    name (name: string): string {
-      return !name
-        ? ''
-        : name
-          .replaceAll(/\d+|\./gi, ' ')
-          .trim()
-          .toLowerCase()
-          .split(/\s+/g)
-          .map(w => w[0].toUpperCase() + w.substring(1))
-          .map(w => w.length > 1 ? w : w + '.')
-          .join(' ');
     }
   };
 

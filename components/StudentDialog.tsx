@@ -26,7 +26,7 @@ import { classFormatsSlice } from '../features/classFormats/classFormatsSlice';
 import Student from '../types/student';
 import User from '../types/user';
 import { useTheme } from '@mui/system';
-import StudentApi from '../Api/StudentApi';
+import StudentApi, { StudentForApi } from '../Api/StudentApi';
 import studentsStore from '../store/studentsStore';
 import { studentsSlice } from '../features/student/studentsSlice';
 import userStore from '../store/userStore';
@@ -44,7 +44,7 @@ function getUser (): User {
   return { id: 1, name: '', email: '' };
 }
 
-function createStudent ():Student {
+function createStudent (): Student {
   return {
     name: '',
     instrument: { instrument: '' },
@@ -53,8 +53,16 @@ function createStudent ():Student {
   };
 }
 
+const daysOfWeek = [
+  'SUNDAY', 'MONDAY',
+  'TUESDAY', 'WEDNESDAY',
+  'THURSDAY', 'FRIDAY',
+  'SATURDAY'
+];
+
 const StudentDialog = (props: StudentDialogProps) => {
   const [student, setStudent] = React.useState<Student>(createStudent());
+  const [user, setUser] = React.useState<User>(userStore.getState());
   const [loading, setLoading] = React.useState<boolean>(true);
   const [formatDialogOpen, setFormatDialogOpen] = React.useState<boolean>(false);
   const [instruments, setInstruments] = React.useState<Instrument[]>([]);
@@ -62,6 +70,9 @@ const StudentDialog = (props: StudentDialogProps) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
+  userStore.subscribe(() => {
+    setUser(userStore.getState());
+  });
   instrumentsStore.subscribe(() => {
     setInstruments(instrumentsStore.getState());
   });
@@ -85,8 +96,7 @@ const StudentDialog = (props: StudentDialogProps) => {
 
   async function handleSubmitClick (): Promise<void> {
     setLoading(true);
-    const userId = userStore.getState().id || 1;
-    if (!student.instrument.instrument || !student.classFormat.id || !userId) {
+    if (!student.instrument.instrument || !student.classFormat.id || !user.id) {
       setLoading(false);
       return;
     }
@@ -96,10 +106,11 @@ const StudentDialog = (props: StudentDialogProps) => {
     if (!student.instrument.id) { return; }
     const newStudentForCreate = {
       name: student.name,
+      daysOfWeek: student.daysOfWeek,
       instrument: { id: student.instrument.id },
       classFormat: { id: student.classFormat.id },
-      user: { id: userId }
-    };
+      user: { id: user.id }
+    } as StudentForApi;
     await StudentApi.create(newStudentForCreate)
       .then(() => {
         fetchStudents();
@@ -142,6 +153,12 @@ const StudentDialog = (props: StudentDialogProps) => {
       classFormat: { ...prevState.classFormat, id: formatId }
     }));
   }
+  function handleDayChange (daysOfWeek: string): void {
+    setStudent(prevState => ({
+      ...prevState,
+      daysOfWeek
+    }));
+  }
   function handleNameChange (name: string): void {
     setStudent(prevState => ({ ...prevState, name }));
   }
@@ -162,11 +179,14 @@ const StudentDialog = (props: StudentDialogProps) => {
     instrument (): boolean {
       return !!student.instrument.instrument;
     },
+    daysOfWeek (): boolean {
+      return daysOfWeek.includes(student.daysOfWeek || '');
+    },
     format (): boolean {
       return !!student.classFormat.id;
     },
     form (): boolean {
-      return this.name() && this.instrument() && this.format();
+      return this.name() && this.instrument() && this.daysOfWeek() && this.format();
     }
   };
 
@@ -193,6 +213,28 @@ const StudentDialog = (props: StudentDialogProps) => {
           onChange={(e, newValue) => { handleInstrumentChange(e, newValue as {id: number;label:string} | string); }}
           options={[...instruments.map(i => ({ ...i, label: i.instrument }))]}
         />
+        <Select
+          label="Dia"
+          value={student.daysOfWeek || '0'}
+          disabled={loading}
+          onChange={e => handleDayChange(e.target.value)}
+        >
+          <MenuItem
+            key={'day-of-week-dia'}
+            value='0'
+            disabled
+          >
+            Dia
+          </MenuItem>
+          {daysOfWeek.map(day => (
+            <MenuItem
+              key={`day-of-week-${day}`}
+              value={day}
+            >
+              {day}
+            </MenuItem>
+          ))}
+        </Select>
         <div className='w-full flex items-center gap-5'>
           <Fab
             size='small'

@@ -3,11 +3,13 @@ import type { NextPage } from 'next';
 import StudentApi from '../Api/StudentApi';
 import User from '../types/user';
 import userStore from '../store/userStore';
-import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { IconButton, Menu, MenuItem, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import MainSpeedDial from '../components/MainSpeedDial';
 import studentsStore from '../store/studentsStore';
 import { studentsSlice } from '../features/student/studentsSlice';
 import Student from '../types/student';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEllipsisVertical, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 interface StudentRow {
   id: number;
@@ -34,6 +36,7 @@ const Home: NextPage = () => {
   const [total, setTotal] = React.useState<number>(0);
   const [students, setStudents] = React.useState<StudentRow[]>([]);
   const [isLoading, setLoading] = React.useState<boolean>(false);
+  const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(null);
   userStore.subscribe(() => {
     setUser(userStore.getState());
   });
@@ -71,25 +74,61 @@ const Home: NextPage = () => {
             <TableCell><span className='text-2xl' title='Nome'>🙋</span></TableCell>
             <TableCell><span className='text-2xl' title='Instrumento'>🎻</span></TableCell>
             <TableCell><span className='text-2xl' title='Modalidade'>📋</span></TableCell>
-            <TableCell><span className='text-2xl' title='Duração'>🕤</span></TableCell>
             <TableCell><span className='text-2xl' title='Valor da Aula'>💰</span></TableCell>
+            <TableCell></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {students.map(s => (
-            <TableRow key={`aluno-${s.id}-${s.name}-${s.instrument}`}>
-              <TableCell>{s.name}</TableCell>
-              <TableCell>{s.instrument}</TableCell>
-              <TableCell>{s.modality}</TableCell>
-              <TableCell>{s.duration} min</TableCell>
-              <TableCell>R$ {s.price},00</TableCell>
-            </TableRow>
-          ))}
+          {students.map(s => {
+            const id = `aluno-${s.id}-${s.name}-${s.instrument}`;
+            return (
+              <TableRow
+                key={id}
+              >
+                <TableCell>{s.name}</TableCell>
+                <TableCell>{s.instrument}</TableCell>
+                <TableCell>{s.modality}</TableCell>
+                <TableCell>R$ {s.price},00</TableCell>
+                <TableCell>
+                  <IconButton
+                    size='small'
+                    onClick={e => setMenuAnchorEl(e.currentTarget)}
+                  >
+                    <FontAwesomeIcon icon={faEllipsisVertical} />
+                  </IconButton>
+                  <Menu
+                    open={!!menuAnchorEl}
+                    anchorEl={menuAnchorEl}
+                    onClose={() => setMenuAnchorEl(null)}
+                  >
+                    <MenuItem
+                      className='flex gap-2'
+                      onClick={() => {
+                        StudentApi.delete(s.id)
+                          .then(() => fetchStudents());
+                        setMenuAnchorEl(null);
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={faTrashAlt}
+                        className="text-red-800"
+                      />
+                      <span>Deletar</span>
+                    </MenuItem>
+                  </Menu>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+          <TableRow key='aluno-total'>
+            <TableCell>Total/semana</TableCell>
+            <TableCell></TableCell>
+            <TableCell></TableCell>
+            <TableCell>R$ {total},00</TableCell>
+            <TableCell></TableCell>
+          </TableRow>
         </TableBody>
       </Table>
-      <section className='mt-3 font-bold'>
-        TOTAL/semana: R$ {total},00
-      </section>
       {!isLoading || !user.token ? <MainSpeedDial /> : null}
     </main>
   );

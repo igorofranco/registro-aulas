@@ -1,8 +1,9 @@
 import Api from './Api';
 import Student from '../types/student';
 
-interface StudentForApi {
+export interface StudentForApi {
   name: string;
+  daysOfWeek: string;
   instrument: {id: number;};
   user: {id: number;};
   classFormat: {id: number};

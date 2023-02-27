@@ -3,7 +3,7 @@ import ClassFormat from '../types/classFormat';
 
 export interface ClassFormatForApi {
   modality: string,
-  timeMinutes: string,
+  timeMinutes: number,
   price: number,
   user: { id: number }
 }

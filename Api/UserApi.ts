@@ -7,7 +7,10 @@ interface UserForApi {
   password: string;
 }
 
-type Token = string;
+interface UserLoginResponse {
+  token: string;
+  userId: number;
+}
 
 interface Credentials {
   email: string;
@@ -19,8 +22,10 @@ abstract class UserApi extends Api {
     return this.fetchApi('POST', '/users/create', user);
   }
 
-  static async attemptLogin (credentials: Credentials): Promise<Token> {
-    return this.fetchApi('POST', '/login', credentials).then(res => res.data.token);
+  static async attemptLogin (credentials: Credentials): Promise<UserLoginResponse> {
+    return this.fetchApi('POST', '/login', credentials).then(res => {
+      return res.data;
+    });
   }
 }
 

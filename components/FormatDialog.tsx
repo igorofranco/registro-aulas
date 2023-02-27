@@ -11,6 +11,7 @@ import ClassFormat from '../types/classFormat';
 import { CloseIcon } from 'next/dist/client/components/react-dev-overlay/internal/icons/CloseIcon';
 import { useTheme } from '@mui/system';
 import User from '../types/user';
+import userStore from '../store/userStore';
 
 interface FormatDialogProps {
   open: boolean;
@@ -19,14 +20,19 @@ interface FormatDialogProps {
 
 const FormatDialog = (props: FormatDialogProps) => {
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [user, setUser] = React.useState<User>(userStore.getState());
   const [format, setFormat] = React.useState<ClassFormat>({
     modality: '',
     price: 0.0,
     timeMinutes: 0,
-    user: { id: 1 } as User
+    user: { id: user.id } as User
   });
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
+  userStore.subscribe(() => {
+    setUser(userStore.getState());
+  });
 
   function handleChangeModality (e: ChangeEvent<HTMLInputElement>) {
     setFormat(prevState => ({ ...prevState, modality: e.target.value }));
@@ -39,7 +45,8 @@ const FormatDialog = (props: FormatDialogProps) => {
   }
   function handleSubmitClick (): void {
     setLoading(true);
-    ClassFormatApi.create(format as unknown as ClassFormatForApi)
+    console.log(user);
+    ClassFormatApi.create({ ...format, user: { id: user.id } as User } as unknown as ClassFormatForApi)
       .then(res => {
         classFormatsStore.dispatch(classFormatsSlice.actions.addClassFormat(res));
         props.onClose();
