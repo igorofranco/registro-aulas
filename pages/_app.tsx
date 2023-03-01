@@ -7,6 +7,7 @@ import userStore from '../store/userStore';
 import { instrumentsStore } from '../store/instrumentsStore';
 import studentsStore from '../store/studentsStore';
 import { classFormatsStore } from '../store/classFormatsStore';
+import Head from 'next/head';
 
 function MyApp ({ Component, pageProps }: AppProps) {
   return (
@@ -14,6 +15,10 @@ function MyApp ({ Component, pageProps }: AppProps) {
       <Provider store={instrumentsStore}>
         <Provider store={studentsStore}>
           <Provider store={classFormatsStore}>
+            <Head>
+              <title>Alunos</title>
+              <meta name='theme-color' content='#1976d2' />
+            </Head>
             <main className='bg-gray-50' style={{ minHeight: '100dvh' }}>
               <PageHeader />
               <main>
