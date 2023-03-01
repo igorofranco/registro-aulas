@@ -198,7 +198,7 @@ const StudentDialog = (props: StudentDialogProps) => {
           <CloseIcon />
         </IconButton>
       </DialogTitle>
-      <form className='min-w-[480px] p-5 flex flex-col gap-5'>
+      <form className='p-5 flex flex-col gap-5' style={{ width: '100%', maxWidth: '600px' }}>
         <TextField
           label='Nome do Aluno'
           autoComplete='off'

@@ -68,7 +68,7 @@ const Home: NextPage = () => {
 
   return (
     <main className='mt-2 flex flex-col items-center justify-center'>
-      <Table className='w-[720px] max-w-full overflow-x-auto'>
+      <Table className='max-w-full overflow-x-auto' sx={{ width: '720px' }}>
         <TableHead>
           <TableRow>
             <TableCell><span className='text-2xl' title='Nome'>🙋</span></TableCell>

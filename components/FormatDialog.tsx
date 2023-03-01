@@ -79,7 +79,7 @@ const FormatDialog = (props: FormatDialogProps) => {
             <CloseIcon />
           </IconButton>
       </DialogTitle>
-      <form className='min-w-[420px] max-w-full p-5 flex flex-col gap-5'>
+      <form className='max-w-full p-5 flex flex-col gap-5' style={{ width: '100%' }}>
         <TextField
           label='Modalidade' placeholder='Presencial / Remoto'
           autoComplete='off'
