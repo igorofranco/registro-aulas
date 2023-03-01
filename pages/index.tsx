@@ -72,8 +72,6 @@ const Home: NextPage = () => {
         <TableHead>
           <TableRow>
             <TableCell><span className='text-2xl' title='Nome'>🙋</span></TableCell>
-            <TableCell><span className='text-2xl' title='Instrumento'>🎻</span></TableCell>
-            <TableCell><span className='text-2xl' title='Modalidade'>📋</span></TableCell>
             <TableCell><span className='text-2xl' title='Valor da Aula'>💰</span></TableCell>
             <TableCell></TableCell>
           </TableRow>
@@ -86,8 +84,6 @@ const Home: NextPage = () => {
                 key={id}
               >
                 <TableCell>{s.name}</TableCell>
-                <TableCell>{s.instrument}</TableCell>
-                <TableCell>{s.modality}</TableCell>
                 <TableCell>R$ {s.price},00</TableCell>
                 <TableCell>
                   <IconButton
@@ -122,8 +118,6 @@ const Home: NextPage = () => {
           })}
           <TableRow key='aluno-total'>
             <TableCell>Total/semana</TableCell>
-            <TableCell></TableCell>
-            <TableCell></TableCell>
             <TableCell>R$ {total},00</TableCell>
             <TableCell></TableCell>
           </TableRow>
