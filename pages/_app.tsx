@@ -10,6 +10,7 @@ import { classFormatsStore } from '../store/classFormatsStore';
 import Head from 'next/head';
 
 function MyApp ({ Component, pageProps }: AppProps) {
+  const themeColor = '1976d2';
   return (
     <Provider store={userStore}>
       <Provider store={instrumentsStore}>
@@ -17,7 +18,10 @@ function MyApp ({ Component, pageProps }: AppProps) {
           <Provider store={classFormatsStore}>
             <Head>
               <title>Alunos</title>
-              <meta name='theme-color' content='#1976d2' />
+              <meta name='theme-color' content={themeColor} />
+              <meta name='msapplication-TileColor' content={themeColor} />
+              <meta name='msapplication-navbutton-color' content={themeColor} />
+              <meta name='apple-mobile-web-app-status-bar-style' content={themeColor} />
             </Head>
             <main className='bg-gray-50' style={{ minHeight: '100dvh' }}>
               <PageHeader />
