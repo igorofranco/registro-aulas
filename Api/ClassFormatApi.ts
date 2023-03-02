@@ -1,5 +1,6 @@
 import Api from './Api';
 import ClassFormat from '../types/classFormat';
+import userStore from '../store/userStore';
 
 export interface ClassFormatForApi {
   modality: string,
@@ -10,7 +11,9 @@ export interface ClassFormatForApi {
 
 abstract class ClassFormatApi extends Api {
   static async getAll (): Promise<ClassFormat[]> {
-    return this.fetchApi('GET', '/formats').then(res => res.data.content);
+    return this.fetchApi('GET', '/formats', {
+      user: { id: userStore.getState().id }
+    }).then(res => res.data.content);
   }
 
   static async create (format: ClassFormatForApi): Promise<ClassFormat> {
