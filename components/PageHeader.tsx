@@ -1,31 +1,28 @@
 import * as React from 'react';
 import Link from 'next/link';
 import userStore from '../store/userStore';
-import User from '../types/user';
 import { userSlice } from '../features/user/userSlice';
 import { AppBar, Box, Toolbar } from '@mui/material';
 
 const PageHeader = () => {
-  const [user, setUser] = React.useState<User>(userStore.getState());
-  userStore.subscribe(() => {
-    setUser(userStore.getState());
-  });
-  const { logout } = userSlice.actions;
-
-  function isLoggedIn (): boolean { return !!user.token; }
-
+  function logout (): void {
+    userStore.dispatch(userSlice.actions.logout());
+  }
   return (
     <Box>
-      <AppBar position='static'>
-        <Toolbar className='flex items-center justify-between'>
-          <Link href='/' className='font-bold hover:no-underline'>
-            Alunos
+      <AppBar position="static">
+        <Toolbar className="flex items-center justify-between">
+          <Link
+            href="/"
+            className="font-bold hover:no-underline"
+          >
+            MCC
           </Link>
           <Link
-            href='/login'
-            onClick={() => (isLoggedIn() ? logout() : null)}
+            href="/login"
+            onClick={() => (userStore.getState().token ? logout() : null)}
           >
-            {isLoggedIn() ? 'Logout' : 'Login'}
+            {userStore.getState().token ? 'Logout' : 'Login'}
           </Link>
         </Toolbar>
       </AppBar>

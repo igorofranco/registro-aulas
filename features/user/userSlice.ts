@@ -13,6 +13,7 @@ export const userSlice = createSlice({
     },
     logout (): User {
       return {
+        id: undefined,
         name: '',
         email: '',
         token: undefined

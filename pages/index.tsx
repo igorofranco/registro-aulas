@@ -10,6 +10,7 @@ import { studentsSlice } from '../features/student/studentsSlice';
 import Student from '../types/student';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisVertical, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { useRouter } from 'next/router';
 
 interface StudentRow {
   id: number;
@@ -64,6 +65,18 @@ const Home: NextPage = () => {
         studentsStore.dispatch(studentsSlice.actions.setStudents(res));
       })
       .then(() => setLoading(false));
+  }
+
+  if (!userStore.getState().id) {
+    const router = useRouter();
+    if (window) router.push('/login').then();
+    return (
+      <main className='grid place-items-center'>
+        <div className='mt-6'>
+          Redirecionando para login...
+        </div>
+      </main>
+    );
   }
 
   return (
