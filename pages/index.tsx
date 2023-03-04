@@ -69,7 +69,7 @@ const Home: NextPage = () => {
 
   if (!userStore.getState().id) {
     const router = useRouter();
-    if (window) router.push('/login').then();
+    if (typeof window !== 'undefined') router.push('/login').then();
     return (
       <main className='grid place-items-center'>
         <div className='mt-6'>
