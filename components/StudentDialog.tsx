@@ -47,6 +47,7 @@ function getUser (): User {
 function createStudent (): Student {
   return {
     name: '',
+    daysOfWeek: 0,
     instrument: { instrument: '' },
     classFormat: { timeMinutes: 0, modality: '', price: 0, user: getUser() },
     user: getUser()
