@@ -54,10 +54,10 @@ function createStudent (): Student {
 }
 
 const daysOfWeek = [
-  'SUNDAY', 'MONDAY',
-  'TUESDAY', 'WEDNESDAY',
-  'THURSDAY', 'FRIDAY',
-  'SATURDAY'
+  'Domingo', 'Segunda',
+  'Terça', 'Quarta',
+  'Quinta', 'Sexta',
+  'Sábado'
 ];
 
 const StudentDialog = (props: StudentDialogProps) => {
@@ -107,9 +107,9 @@ const StudentDialog = (props: StudentDialogProps) => {
     const newStudentForCreate = {
       name: student.name,
       daysOfWeek: student.daysOfWeek,
-      instrument: { id: student.instrument.id },
-      classFormat: { id: student.classFormat.id },
-      user: { id: user.id }
+      instrumentId: student.instrument.id,
+      classFormatId: student.classFormat.id,
+      userId: user.id
     } as StudentForApi;
     await StudentApi.create(newStudentForCreate)
       .then(() => {
@@ -153,7 +153,7 @@ const StudentDialog = (props: StudentDialogProps) => {
       classFormat: { ...prevState.classFormat, id: formatId }
     }));
   }
-  function handleDayChange (daysOfWeek: string): void {
+  function handleDayChange (daysOfWeek: number): void {
     setStudent(prevState => ({
       ...prevState,
       daysOfWeek
@@ -180,7 +180,7 @@ const StudentDialog = (props: StudentDialogProps) => {
       return !!student.instrument.instrument;
     },
     daysOfWeek (): boolean {
-      return daysOfWeek.includes(student.daysOfWeek || '');
+      return !!student.daysOfWeek || student.daysOfWeek === 0;
     },
     format (): boolean {
       return !!student.classFormat.id;
@@ -215,21 +215,21 @@ const StudentDialog = (props: StudentDialogProps) => {
         />
         <Select
           label="Dia"
-          value={student.daysOfWeek || '0'}
+          value={student.daysOfWeek || 'nulo'}
           disabled={loading}
-          onChange={e => handleDayChange(e.target.value)}
+          onChange={e => handleDayChange(+e.target.value)}
         >
           <MenuItem
             key={'day-of-week-dia'}
-            value='0'
+            value='nulo'
             disabled
           >
             Dia
           </MenuItem>
-          {daysOfWeek.map(day => (
+          {daysOfWeek.map((day, i) => (
             <MenuItem
               key={`day-of-week-${day}`}
-              value={day}
+              value={i}
             >
               {day}
             </MenuItem>

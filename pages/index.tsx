@@ -10,7 +10,6 @@ import { studentsSlice } from '../features/student/studentsSlice';
 import Student from '../types/student';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisVertical, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { useRouter } from 'next/router';
 
 interface StudentRow {
   id: number;
@@ -19,7 +18,18 @@ interface StudentRow {
   modality: string;
   duration: number;
   price: number;
+  student: Student;
 }
+
+const daysInEnglish = [
+  'SUNDAY',
+  'MONDAY',
+  'TUESDAY',
+  'WEDNESDAY',
+  'THURSDAY',
+  'FRIDAY',
+  'SATURADAY'
+];
 
 function studentToRow (student: Student): StudentRow {
   return {
@@ -28,7 +38,8 @@ function studentToRow (student: Student): StudentRow {
     instrument: student.instrument?.instrument,
     modality: student.classFormat.modality,
     duration: student.classFormat.timeMinutes,
-    price: student.classFormat.price / 100
+    price: student.classFormat.price / 100,
+    student
   };
 }
 
@@ -67,16 +78,30 @@ const Home: NextPage = () => {
       .then(() => setLoading(false));
   }
 
+  function montlyValueByStudent (student: Student): number {
+    const date = new Date();
+    const selectedMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    const numberOfDaysInSelecetdMonth = selectedMonth.getDate();
+    let numberOfClasses = 0;
+    for (let i = 0; i <= numberOfDaysInSelecetdMonth; i++) {
+      selectedMonth.setDate(i);
+      if (selectedMonth.getDay() === daysInEnglish.indexOf(student.daysOfWeek.toString())) {
+        numberOfClasses++;
+      }
+    }
+    return (numberOfClasses * student.classFormat.price) / 100;
+  }
+
+  function getMonthTotal (): number {
+    let sum = 0;
+    for (const student of students) {
+      sum += montlyValueByStudent(student.student);
+    }
+    return sum;
+  }
+
   if (!userStore.getState().id) {
-    const router = useRouter();
-    if (typeof window !== 'undefined') router.push('/login').then();
-    return (
-      <main className='grid place-items-center'>
-        <div className='mt-6'>
-          Redirecionando para login...
-        </div>
-      </main>
-    );
+    return null;
   }
 
   return (
@@ -85,7 +110,7 @@ const Home: NextPage = () => {
         <TableHead>
           <TableRow>
             <TableCell><span className='text-2xl' title='Nome'>🙋</span></TableCell>
-            <TableCell><span className='text-2xl' title='Valor da Aula'>💰</span></TableCell>
+            <TableCell><span className='text-2xl' title='Valor da Aula'>💰</span>/mês</TableCell>
             <TableCell></TableCell>
           </TableRow>
         </TableHead>
@@ -97,7 +122,7 @@ const Home: NextPage = () => {
                 key={id}
               >
                 <TableCell>{s.name}</TableCell>
-                <TableCell>R$ {s.price},00</TableCell>
+                <TableCell>R$ {montlyValueByStudent(s.student)},00</TableCell>
                 <TableCell>
                   <IconButton
                     size='small'
@@ -132,6 +157,11 @@ const Home: NextPage = () => {
           <TableRow key='aluno-total'>
             <TableCell>Total/semana</TableCell>
             <TableCell>R$ {total},00</TableCell>
+            <TableCell></TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Total/mês</TableCell>
+            <TableCell>R$ {getMonthTotal()},00</TableCell>
             <TableCell></TableCell>
           </TableRow>
         </TableBody>

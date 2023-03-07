@@ -5,7 +5,7 @@ import User from './user';
 interface Student {
   id?: number;
   name: string;
-  daysOfWeek?: string;
+  daysOfWeek: number;
   instrument: Instrument;
   classFormat: ClassFormat;
   user: User; // professor

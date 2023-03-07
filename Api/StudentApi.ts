@@ -4,10 +4,10 @@ import userStore from '../store/userStore';
 
 export interface StudentForApi {
   name: string;
-  daysOfWeek: string;
-  instrument: {id: number;};
-  user: {id: number;};
-  classFormat: {id: number};
+  daysOfWeek: number;
+  instrumentId: number;
+  userId: number;
+  classFormatId: number;
 }
 
 abstract class StudentApi extends Api {
