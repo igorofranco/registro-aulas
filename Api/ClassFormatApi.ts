@@ -3,10 +3,10 @@ import ClassFormat from '../types/classFormat';
 import userStore from '../store/userStore';
 
 export interface ClassFormatForApi {
-  modality: string,
-  timeMinutes: number,
-  price: number,
-  user: { id: number }
+  modality: string;
+  timeMinutes: number;
+  price: number;
+  userId: number;
 }
 
 abstract class ClassFormatApi extends Api {

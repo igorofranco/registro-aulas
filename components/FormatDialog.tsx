@@ -3,7 +3,7 @@ import Dialog from '@mui/material/Dialog';
 import { Button, DialogTitle, IconButton, InputAdornment, TextField, useMediaQuery } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTable } from '@fortawesome/free-solid-svg-icons';
-import ClassFormatApi, { ClassFormatForApi } from '../Api/ClassFormatApi';
+import ClassFormatApi from '../Api/ClassFormatApi';
 import { ChangeEvent } from 'react';
 import { classFormatsStore } from '../store/classFormatsStore';
 import { classFormatsSlice } from '../features/classFormats/classFormatsSlice';
@@ -44,9 +44,14 @@ const FormatDialog = (props: FormatDialogProps) => {
     setFormat(prevState => ({ ...prevState, price: +e.target.value * 100 }));
   }
   function handleSubmitClick (): void {
+    if (!user.id) { return; }
     setLoading(true);
-    console.log(user);
-    ClassFormatApi.create({ ...format, user: { id: user.id } as User } as unknown as ClassFormatForApi)
+    ClassFormatApi.create({
+      modality: format.modality,
+      price: format.price,
+      timeMinutes: format.timeMinutes,
+      userId: user.id
+    })
       .then(res => {
         classFormatsStore.dispatch(classFormatsSlice.actions.addClassFormat(res));
         props.onClose();
