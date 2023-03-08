@@ -28,8 +28,10 @@ function MyApp ({ Component, pageProps }: AppProps) {
   React.useEffect(() => {
     setLoading(true);
     if (!userStore.getState().id) {
-      const router = useRouter();
-      if (typeof window !== 'undefined') router.push('/login').then();
+      if (typeof window !== 'undefined') {
+        const router = useRouter();
+        router.push('/login').then();
+      }
       return;
     }
     StudentApi.getAll()
