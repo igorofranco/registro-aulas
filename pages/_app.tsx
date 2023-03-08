@@ -13,6 +13,7 @@ import { useRouter } from 'next/router';
 import User from '../types/user';
 import StudentApi from '../Api/StudentApi';
 import { studentsSlice } from '../features/student/studentsSlice';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 function MyApp ({ Component, pageProps }: AppProps) {
   const themeColor = '1976d2';
@@ -46,27 +47,29 @@ function MyApp ({ Component, pageProps }: AppProps) {
   }
 
   return (
-    <Provider store={userStore}>
-      <Provider store={instrumentsStore}>
-        <Provider store={studentsStore}>
-          <Provider store={classFormatsStore}>
-            <Head>
-              <title>Alunos</title>
-              <meta name='theme-color' content={themeColor} />
-              <meta name='msapplication-TileColor' content={themeColor} />
-              <meta name='msapplication-navbutton-color' content={themeColor} />
-              <meta name='apple-mobile-web-app-status-bar-style' content={themeColor} />
-            </Head>
-            <main className='bg-gray-50' style={{ minHeight: '100dvh' }}>
-              <PageHeader />
-              <main>
-                <Component {...pageProps} />
+    <ErrorBoundary>
+      <Provider store={userStore}>
+        <Provider store={instrumentsStore}>
+          <Provider store={studentsStore}>
+            <Provider store={classFormatsStore}>
+              <Head>
+                <title>Alunos</title>
+                <meta name='theme-color' content={themeColor} />
+                <meta name='msapplication-TileColor' content={themeColor} />
+                <meta name='msapplication-navbutton-color' content={themeColor} />
+                <meta name='apple-mobile-web-app-status-bar-style' content={themeColor} />
+              </Head>
+              <main className='bg-gray-50' style={{ minHeight: '100dvh' }}>
+                <PageHeader />
+                <main>
+                  <Component {...pageProps} />
+                </main>
               </main>
-            </main>
+            </Provider>
           </Provider>
         </Provider>
       </Provider>
-    </Provider>
+    </ErrorBoundary>
   );
 }
 
