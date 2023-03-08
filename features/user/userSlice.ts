@@ -19,7 +19,9 @@ export const userSlice = createSlice({
       return newState.payload as User;
     },
     logout (): User {
-      localStorage.removeItem('user');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('user');
+      }
       return unloggedUser;
     },
     autoLoginByLocalStorage () {
