@@ -30,7 +30,7 @@ function MyApp ({ Component, pageProps }: AppProps) {
     if (!userStore.getState()?.id) {
       if (typeof window !== 'undefined') {
         const router = useRouter();
-        router.push('/login').then();
+        router.push('/login');
       }
       return;
     }
