@@ -29,8 +29,7 @@ function MyApp ({ Component, pageProps }: AppProps) {
     setLoading(true);
     if (!userStore.getState()?.id) {
       if (typeof window !== 'undefined') {
-        const router = useRouter();
-        console.log(router.basePath);
+        console.log(useRouter);
         // router.push('/login');
       }
       return;
