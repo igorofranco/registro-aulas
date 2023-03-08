@@ -25,6 +25,7 @@ export default class ErrorBoundary extends React.Component {
       return <h1>Something went wrong.</h1>;
     }
 
+    // eslint-disable-next-line react/prop-types
     return (this.props as any).children;
   }
 }
