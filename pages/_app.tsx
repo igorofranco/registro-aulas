@@ -10,25 +10,24 @@ import { classFormatsStore } from '../store/classFormatsStore';
 import Head from 'next/head';
 import { userSlice } from '../features/user/userSlice';
 import { useRouter } from 'next/router';
-import User from '../types/user';
+// import User from '../types/user';
 import StudentApi from '../Api/StudentApi';
 import { studentsSlice } from '../features/student/studentsSlice';
-import ErrorBoundary from '../components/ErrorBoundary';
 
 function MyApp ({ Component, pageProps }: AppProps) {
   const themeColor = '1976d2';
-  const [user, setUser] = React.useState<User>(userStore.getState());
+  // const [user, setUser] = React.useState<User>(userStore.getState());
   const [isLoading, setLoading] = React.useState<boolean>(true);
-  userStore.subscribe(() => {
-    setUser(userStore.getState());
-  });
+  // userStore.subscribe(() => {
+  //   setUser(userStore.getState());
+  // });
   React.useEffect(() => {
     userStore.dispatch(userSlice.actions.autoLoginByLocalStorage());
   }, []);
 
   React.useEffect(() => {
     setLoading(true);
-    if (!userStore.getState().id) {
+    if (!userStore.getState()?.id) {
       if (typeof window !== 'undefined') {
         const router = useRouter();
         router.push('/login').then();
@@ -40,36 +39,34 @@ function MyApp ({ Component, pageProps }: AppProps) {
         studentsStore.dispatch(studentsSlice.actions.setStudents(res));
       })
       .then(() => setLoading(false));
-  }, [user]);
+  }, []);
 
   if (isLoading) {
     return <div>carregando</div>;
   }
 
   return (
-    <ErrorBoundary>
-      <Provider store={userStore}>
-        <Provider store={instrumentsStore}>
-          <Provider store={studentsStore}>
-            <Provider store={classFormatsStore}>
-              <Head>
-                <title>Alunos</title>
-                <meta name='theme-color' content={themeColor} />
-                <meta name='msapplication-TileColor' content={themeColor} />
-                <meta name='msapplication-navbutton-color' content={themeColor} />
-                <meta name='apple-mobile-web-app-status-bar-style' content={themeColor} />
-              </Head>
-              <main className='bg-gray-50' style={{ minHeight: '100dvh' }}>
-                <PageHeader />
-                <main>
-                  <Component {...pageProps} />
-                </main>
+    <Provider store={userStore}>
+      <Provider store={instrumentsStore}>
+        <Provider store={studentsStore}>
+          <Provider store={classFormatsStore}>
+            <Head>
+              <title>Alunos</title>
+              <meta name='theme-color' content={themeColor} />
+              <meta name='msapplication-TileColor' content={themeColor} />
+              <meta name='msapplication-navbutton-color' content={themeColor} />
+              <meta name='apple-mobile-web-app-status-bar-style' content={themeColor} />
+            </Head>
+            <main className='bg-gray-50' style={{ minHeight: '100dvh' }}>
+              <PageHeader />
+              <main>
+                <Component {...pageProps} />
               </main>
-            </Provider>
+            </main>
           </Provider>
         </Provider>
       </Provider>
-    </ErrorBoundary>
+    </Provider>
   );
 }
 
