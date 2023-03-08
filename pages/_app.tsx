@@ -9,7 +9,7 @@ import studentsStore from '../store/studentsStore';
 import { classFormatsStore } from '../store/classFormatsStore';
 import Head from 'next/head';
 import { userSlice } from '../features/user/userSlice';
-// import { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import User from '../types/user';
 import StudentApi from '../Api/StudentApi';
 import { studentsSlice } from '../features/student/studentsSlice';
@@ -29,7 +29,8 @@ function MyApp ({ Component, pageProps }: AppProps) {
     setLoading(true);
     if (!userStore.getState()?.id) {
       if (typeof window !== 'undefined') {
-        // const router = useRouter();
+        const router = useRouter();
+        console.log(router.basePath);
         // router.push('/login');
       }
       return;
