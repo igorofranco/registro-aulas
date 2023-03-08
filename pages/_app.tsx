@@ -27,7 +27,7 @@ function MyApp ({ Component, pageProps }: AppProps) {
   React.useEffect(() => {
     setLoading(true);
     if (!userStore.getState()?.id) {
-      if (typeof window !== 'undefined') {
+      if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
         window.location.replace('/login');
       }
       return;
