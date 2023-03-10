@@ -288,6 +288,7 @@ const Home: NextPage = () => {
                     <Button
                       color='error'
                       disabled={!advancedEdition || isFormatReadyToBeDeleted(f.modality)}
+                      onClick={() => ClassFormatApi.delete(f.id as number).then(() => fetchFormats())}
                     >
                       <FontAwesomeIcon icon={faTrashAlt} />
                     </Button>
