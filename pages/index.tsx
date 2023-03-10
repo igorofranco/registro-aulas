@@ -151,12 +151,15 @@ const Home: NextPage = () => {
   }
 
   return (
-    <main className="mt-2 flex flex-col items-center justify-center">
-      <Card className="font-bold text-center text-neutral-800">
+    <main className="mt-2 flex flex-col gap-4 items-center justify-center">
+      <Card
+        className="font-bold text-center text-neutral-800"
+        style={{ width: '720px', maxWidth: 'calc(100% - 1.5em)' }}
+      >
         <CardContent>
           <div className="text-3xl">{rs(getMonthTotal())}</div>
           <div className="text-xl">em</div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center gap-2">
             <Button
               size="small"
               variant="outlined"
@@ -180,68 +183,70 @@ const Home: NextPage = () => {
           </div>
         </CardContent>
       </Card>
-      <main style={{ maxWidth: '100%' }}>
-        <Table
-          className="max-w-full overflow-x-auto"
-          sx={{ width: '720px' }}
-        >
-          <TableHead>
-            <TableRow>
-              <TableCell><span
-                className="text-2xl"
-                title="Nome"
-              >🙋</span></TableCell>
-              <TableCell><span
-                className="text-2xl"
-                title="Valor da Aula"
-              >💰</span>/mês</TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {students.map(s => {
-              const id = `aluno-${s.id}-${s.name}-${s.instrument}`;
-              return (
-                <TableRow
-                  key={id}
-                >
-                  <TableCell>{s.name}</TableCell>
-                  <TableCell>{rs(montlyValueByStudent(s.student))}</TableCell>
-                  <TableCell>
-                    <IconButton
-                      size="small"
-                      disabled={isLoading || !user.token}
-                      onClick={e => setMenuAnchorEl(e.currentTarget)}
-                    >
-                      <FontAwesomeIcon icon={faEllipsisVertical} />
-                    </IconButton>
-                    <Menu
-                      open={!!menuAnchorEl}
-                      anchorEl={menuAnchorEl}
-                      onClose={() => setMenuAnchorEl(null)}
-                    >
-                      <MenuItem
-                        className="flex gap-2"
-                        onClick={() => {
-                          StudentApi.delete(s.id)
-                            .then(() => fetchStudents());
-                          setMenuAnchorEl(null);
-                        }}
+      <Card style={{ maxWidth: 'calc(100% - 1.5em)' }}>
+        <CardContent>
+          <Table
+            className="max-w-full overflow-x-auto"
+            sx={{ width: '720px' }}
+          >
+            <TableHead>
+              <TableRow>
+                <TableCell><span
+                  className="text-2xl"
+                  title="Nome"
+                >🙋</span></TableCell>
+                <TableCell><span
+                  className="text-2xl"
+                  title="Valor da Aula"
+                >💰</span>/mês</TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {students.map(s => {
+                const id = `aluno-${s.id}-${s.name}-${s.instrument}`;
+                return (
+                  <TableRow
+                    key={id}
+                  >
+                    <TableCell>{s.name}</TableCell>
+                    <TableCell>{rs(montlyValueByStudent(s.student))}</TableCell>
+                    <TableCell>
+                      <IconButton
+                        size="small"
+                        disabled={isLoading || !user.token}
+                        onClick={e => setMenuAnchorEl(e.currentTarget)}
                       >
-                        <FontAwesomeIcon
-                          icon={faTrashAlt}
-                          className="text-red-800"
-                        />
-                        <span>Deletar</span>
-                      </MenuItem>
-                    </Menu>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </main>
+                        <FontAwesomeIcon icon={faEllipsisVertical} />
+                      </IconButton>
+                      <Menu
+                        open={!!menuAnchorEl}
+                        anchorEl={menuAnchorEl}
+                        onClose={() => setMenuAnchorEl(null)}
+                      >
+                        <MenuItem
+                          className="flex gap-2"
+                          onClick={() => {
+                            StudentApi.delete(s.id)
+                              .then(() => fetchStudents());
+                            setMenuAnchorEl(null);
+                          }}
+                        >
+                          <FontAwesomeIcon
+                            icon={faTrashAlt}
+                            className="text-red-800"
+                          />
+                          <span>Deletar</span>
+                        </MenuItem>
+                      </Menu>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
       {!isLoading && user.token ? <MainSpeedDial /> : null}
     </main>
   );
