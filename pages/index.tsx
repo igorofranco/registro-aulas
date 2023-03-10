@@ -20,7 +20,7 @@ import studentsStore from '../store/studentsStore';
 import { studentsSlice } from '../features/student/studentsSlice';
 import Student from '../types/student';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisVertical, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisVertical, faTrashAlt, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 interface StudentRow {
   id: number;
@@ -151,24 +151,23 @@ const Home: NextPage = () => {
   }
 
   return (
-    <main className="mt-2 flex flex-col gap-4 items-center justify-center">
+    <main className="mt-6 flex flex-col gap-4 items-center justify-center">
       <Card
         className="font-bold text-center text-neutral-800"
-        style={{ width: '720px', maxWidth: 'calc(100% - 1.5em)' }}
+        style={{ minWidth: '300px', maxWidth: 'calc(100% - 1.5em)' }}
       >
         <CardContent>
-          <div className="text-3xl">{rs(getMonthTotal())}</div>
-          <div className="text-xl">em</div>
+          <div className="mb-3 text-3xl">{rs(getMonthTotal())}</div>
           <div className="flex items-center justify-center gap-2">
             <Button
               size="small"
               variant="outlined"
               onClick={previousMonth}
             >
-              {'<-'}
+              <FontAwesomeIcon icon={faArrowLeft} />
             </Button>
             <span
-              className="text-2xl hover:cursor-pointer"
+              className="text-xl hover:cursor-pointer"
               onClick={resetDate}
             >
             {monthsInPt[selectedMonth - 1]}/{selectedYear}
@@ -178,7 +177,7 @@ const Home: NextPage = () => {
               variant="outlined"
               onClick={nextMonth}
             >
-              {'->'}
+              <FontAwesomeIcon icon={faArrowRight} />
             </Button>
           </div>
         </CardContent>
