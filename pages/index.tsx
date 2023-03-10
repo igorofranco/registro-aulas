@@ -3,7 +3,18 @@ import type { NextPage } from 'next';
 import StudentApi from '../Api/StudentApi';
 import User from '../types/user';
 import userStore from '../store/userStore';
-import { Button, IconButton, Menu, MenuItem, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import {
+  Button,
+  Card, CardContent,
+  IconButton,
+  Menu,
+  MenuItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow
+} from '@mui/material';
 import MainSpeedDial from '../components/MainSpeedDial';
 import studentsStore from '../store/studentsStore';
 import { studentsSlice } from '../features/student/studentsSlice';
@@ -141,33 +152,35 @@ const Home: NextPage = () => {
 
   return (
     <main className="mt-2 flex flex-col items-center justify-center">
-      <header className="font-bold text-center">
-        <div className="text-3xl">{rs(getMonthTotal())}</div>
-        <div className="text-xl">em</div>
-        <div className="flex items-center gap-2">
-          <Button
-            size='small'
-            variant='outlined'
-            onClick={previousMonth}
-          >
-            {'<-'}
-          </Button>
-          <span
-            className="text-2xl hover:cursor-pointer"
-            onClick={resetDate}
-          >
+      <Card className="font-bold text-center text-neutral-800">
+        <CardContent>
+          <div className="text-3xl">{rs(getMonthTotal())}</div>
+          <div className="text-xl">em</div>
+          <div className="flex items-center gap-2">
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={previousMonth}
+            >
+              {'<-'}
+            </Button>
+            <span
+              className="text-2xl hover:cursor-pointer"
+              onClick={resetDate}
+            >
             {monthsInPt[selectedMonth - 1]}/{selectedYear}
           </span>
-          <Button
-            size='small'
-            variant='outlined'
-            onClick={nextMonth}
-          >
-            {'->'}
-          </Button>
-        </div>
-      </header>
-      <main>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={nextMonth}
+            >
+              {'->'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+      <main style={{ maxWidth: '100%' }}>
         <Table
           className="max-w-full overflow-x-auto"
           sx={{ width: '720px' }}
