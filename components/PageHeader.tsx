@@ -3,8 +3,13 @@ import Link from 'next/link';
 import userStore from '../store/userStore';
 import { userSlice } from '../features/user/userSlice';
 import { AppBar, Box, Toolbar } from '@mui/material';
+import User from '../types/user';
 
 const PageHeader = () => {
+  const [user, setUser] = React.useState<User>(userStore.getState());
+
+  userStore.subscribe(() => setUser(userStore.getState()));
+
   function logout (): void {
     userStore.dispatch(userSlice.actions.logout());
   }
@@ -22,7 +27,7 @@ const PageHeader = () => {
             href="/login"
             onClick={() => (userStore.getState().token ? logout() : null)}
           >
-            {userStore.getState().token ? 'Logout' : 'Login'}
+            {user?.token ? 'Logout' : 'Login'}
           </Link>
         </Toolbar>
       </AppBar>

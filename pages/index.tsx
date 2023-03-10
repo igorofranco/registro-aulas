@@ -8,7 +8,7 @@ import {
   Card, CardContent,
   IconButton,
   Menu,
-  MenuItem,
+  MenuItem, Switch,
   Table,
   TableBody,
   TableCell,
@@ -21,6 +21,10 @@ import { studentsSlice } from '../features/student/studentsSlice';
 import Student from '../types/student';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisVertical, faTrashAlt, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import ClassFormatApi from '../Api/ClassFormatApi';
+import { classFormatsStore } from '../store/classFormatsStore';
+import { classFormatsSlice } from '../features/classFormats/classFormatsSlice';
+import ClassFormat from '../types/classFormat';
 
 interface StudentRow {
   id: number;
@@ -49,6 +53,12 @@ const monthsInPt = [
   'Out', 'Nov', 'Dez'
 ];
 
+function rs (value: number): string {
+  let v = value.toString();
+  v = v.slice(0, v.length - 2) + ',' + v.slice(v.length - 2);
+  return `R$ ${v}`;
+}
+
 function studentToRow (student: Student): StudentRow {
   return {
     id: student.id || 0,
@@ -64,21 +74,22 @@ function studentToRow (student: Student): StudentRow {
 const Home: NextPage = () => {
   const [user, setUser] = React.useState<User>(userStore.getState());
   const [students, setStudents] = React.useState<StudentRow[]>([]);
+  const [formats, setFormats] = React.useState<ClassFormat[]>([]);
   const [isLoading, setLoading] = React.useState<boolean>(false);
+  const [advancedEdition, setAdvancedEdition] = React.useState<boolean>(false);
   const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedMonth, setSelectedMonth] = React.useState<number>(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = React.useState<number>(new Date().getFullYear());
-  userStore.subscribe(() => {
-    setUser(userStore.getState());
-  });
-  studentsStore.subscribe(() => {
-    setStudents(studentsStore.getState().map(s => studentToRow(s)));
-  });
+
+  userStore.subscribe(() => setUser(userStore.getState()));
+  studentsStore.subscribe(() => setStudents(studentsStore.getState().map(s => studentToRow(s))));
+  classFormatsStore.subscribe(() => setFormats(classFormatsStore.getState()));
 
   React.useEffect(() => {
     if (!user.token) { return; }
     fetchStudents();
-  }, []);
+    fetchFormats();
+  }, [user]);
 
   function previousMonth (): void {
     setSelectedMonth(prevState => {
@@ -110,10 +121,8 @@ const Home: NextPage = () => {
     setSelectedYear(date.getFullYear());
   }
 
-  function rs (value: number): string {
-    let v = value.toString();
-    v = v.slice(0, v.length - 2) + ',' + v.slice(v.length - 2);
-    return `R$ ${v}`;
+  function isFormatReadyToBeDeleted (modality: string): boolean {
+    return !!students.find(s => s.modality === modality);
   }
 
   function fetchStudents (): void {
@@ -122,6 +131,13 @@ const Home: NextPage = () => {
       .then(res => {
         studentsStore.dispatch(studentsSlice.actions.setStudents(res));
       })
+      .then(() => setLoading(false));
+  }
+
+  function fetchFormats (): void {
+    setLoading(true);
+    ClassFormatApi.getAll()
+      .then(res => classFormatsStore.dispatch(classFormatsSlice.actions.setClassFormats(res)))
       .then(() => setLoading(false));
   }
 
@@ -167,7 +183,7 @@ const Home: NextPage = () => {
               <FontAwesomeIcon icon={faArrowLeft} />
             </Button>
             <span
-              className="text-xl hover:cursor-pointer"
+              className="text-xl select-none hover:cursor-pointer"
               onClick={resetDate}
             >
             {monthsInPt[selectedMonth - 1]}/{selectedYear}
@@ -244,6 +260,49 @@ const Home: NextPage = () => {
               })}
             </TableBody>
           </Table>
+        </CardContent>
+      </Card>
+      <Card style={{ maxWidth: 'calc(100% - 1.5em)' }}>
+        <CardContent>
+          <Table
+            className="max-w-full overflow-x-auto"
+            sx={{ width: '720px' }}
+          >
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <span className="text-xl">Modalidade</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-xl">$/aula</span>
+                </TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {formats.map(f => (
+                <TableRow key={`format-table-${f.id}`}>
+                  <TableCell>{f.modality}</TableCell>
+                  <TableCell>{rs(f.price)}</TableCell>
+                  <TableCell>
+                    <Button
+                      color='error'
+                      disabled={!advancedEdition || isFormatReadyToBeDeleted(f.modality)}
+                    >
+                      <FontAwesomeIcon icon={faTrashAlt} />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <div className="mt-4 flex items-center">
+            <Switch
+              checked={advancedEdition}
+              onChange={e => setAdvancedEdition(e.target.checked)}
+            />
+            <span>Edição avançada</span>
+          </div>
         </CardContent>
       </Card>
       {!isLoading && user.token ? <MainSpeedDial /> : null}

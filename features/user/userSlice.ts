@@ -24,7 +24,7 @@ export const userSlice = createSlice({
       }
       return unloggedUser;
     },
-    autoLoginByLocalStorage () {
+    autoLoginByLocalStorage (): User {
       if (typeof window === 'undefined') {
         return unloggedUser;
       }
