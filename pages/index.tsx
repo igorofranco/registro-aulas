@@ -15,7 +15,6 @@ import {
   TableHead,
   TableRow
 } from '@mui/material';
-import MainSpeedDial from '../components/MainSpeedDial';
 import studentsStore from '../store/studentsStore';
 import { studentsSlice } from '../features/student/studentsSlice';
 import Student from '../types/student';
@@ -25,6 +24,7 @@ import ClassFormatApi from '../Api/ClassFormatApi';
 import { classFormatsStore } from '../store/classFormatsStore';
 import { classFormatsSlice } from '../features/classFormats/classFormatsSlice';
 import ClassFormat from '../types/classFormat';
+import StudentDialog from '../components/StudentDialog';
 
 interface StudentRow {
   id: number;
@@ -80,6 +80,7 @@ const Home: NextPage = () => {
   const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedMonth, setSelectedMonth] = React.useState<number>(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = React.useState<number>(new Date().getFullYear());
+  const [isStudentDialogOpen, setStudentDialogOpen] = React.useState<boolean>(false);
 
   userStore.subscribe(() => setUser(userStore.getState()));
   studentsStore.subscribe(() => setStudents(studentsStore.getState().map(s => studentToRow(s))));
@@ -141,7 +142,7 @@ const Home: NextPage = () => {
       .then(() => setLoading(false));
   }
 
-  function montlyValueByStudent (student: Student): number {
+  function monthlyValueByStudent (student: Student): number {
     const month = new Date(selectedYear, selectedMonth, 0);
     const numberOfDaysInSelecetdMonth = month.getDate();
     let numberOfClasses = 0;
@@ -157,9 +158,16 @@ const Home: NextPage = () => {
   function getMonthTotal (): number {
     let sum = 0;
     for (const student of students) {
-      sum += montlyValueByStudent(student.student);
+      sum += monthlyValueByStudent(student.student);
     }
     return sum;
+  }
+
+  function handleStudentDialogOpen (): void {
+    setStudentDialogOpen(true);
+  }
+  function handleStudentDialogClose (): void {
+    setStudentDialogOpen(false);
   }
 
   if (!userStore.getState().id) {
@@ -225,7 +233,7 @@ const Home: NextPage = () => {
                     key={id}
                   >
                     <TableCell>{s.name}</TableCell>
-                    <TableCell>{rs(montlyValueByStudent(s.student))}</TableCell>
+                    <TableCell>{rs(monthlyValueByStudent(s.student))}</TableCell>
                     <TableCell>
                       <IconButton
                         size="small"
@@ -260,6 +268,15 @@ const Home: NextPage = () => {
               })}
             </TableBody>
           </Table>
+          <div className="flex justify-end">
+            <Button
+              className="mt-4"
+              variant="contained"
+              onClick={handleStudentDialogOpen}
+            >
+            Novo Aluno
+          </Button>
+          </div>
         </CardContent>
       </Card>
       <Card style={{ maxWidth: 'calc(100% - 1.5em)' }}>
@@ -306,7 +323,7 @@ const Home: NextPage = () => {
           </div>
         </CardContent>
       </Card>
-      {!isLoading && user.token ? <MainSpeedDial /> : null}
+      <StudentDialog open={isStudentDialogOpen} onClose={handleStudentDialogClose} />
     </main>
   );
 };

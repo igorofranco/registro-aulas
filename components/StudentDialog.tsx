@@ -236,6 +236,7 @@ const StudentDialog = (props: StudentDialogProps) => {
             </MenuItem>
           ))}
         </Select>
+        <input type="date" />
         <div className='w-full flex items-center gap-5'>
           <Fab
             size='small'
